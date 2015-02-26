@@ -64,7 +64,7 @@ let rec nf_solve game =
 
         let w = find_w succ win_reg j in
 
-        if w <> (-1) then (
+        if w <> -1 then (
             win_reg.(n) <- 1 - j;
             strat.(n) <- w;
             (win_reg, strat)
@@ -123,12 +123,12 @@ let to_normal_form game =
 
     Array.iteri (fun i (pr, pl, succ, label) -> 
                     if pr mod 2 = pl then (
-                        nf_game.(i + l)   <- (1 - pl, 1 - pl, [|i|], None);
-                        nf_game.(i)       <- (pr + 2, pl,     succ,  label)
+                        nf_game.(i + l) <- (1 - pl, 1 - pl, [|i|], None);
+                        nf_game.(i)     <- (pr + 2, pl,     succ,  label)
                     ) else (
-                        nf_game.(i + l)   <- (pl,     pl,     [|i|],     None);
-                        nf_game.(i)       <- (pr + 2, 1 - pl, [|i+2*l|], label);
-                        nf_game.(i + 2*l) <- (pl,     pl,     succ,      None)
+                        nf_game.(i + l)   <- (pl,     pl,     [|i|],       None);
+                        nf_game.(i)       <- (pr + 2, 1 - pl, [|i + 2*l|], label);
+                        nf_game.(i + 2*l) <- (pl,     pl,     succ,        None)
                     )
                 )
                 game;
