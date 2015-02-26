@@ -87,9 +87,14 @@ let rec solve game =
     )
 
 
+let univ_solve = Univsolve.universal_solve
+                     (Univsolve.universal_solve_init_options_verbose
+                      !Univsolve.universal_solve_global_options)
+                     solve
+
+
 let _ = Solvers.register_solver
-            solve
+            univ_solve
             "zielonka"
             "zi"
             "my implementation of the recursive algorithm due to Zielonka"
-            

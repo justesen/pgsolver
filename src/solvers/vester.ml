@@ -148,12 +148,14 @@ let to_normal_form game =
 (* solve : paritygame -> solution * strategy
  * Solve parity game. *)
 let solve game = 
-    let l = pg_size game in
+    let (win_reg, strat) = nf_solve game in
+    (win_reg, sanify_strat game strat win_reg)
+    (* let l = pg_size game in
     let nf_game = to_normal_form game in
     let (nf_win_reg, nf_strat) = nf_solve nf_game in
     let win_reg = win_reg_from_nf nf_win_reg l in
     let strat = sanify_strat game (strat_from_nf nf_strat l nf_game) win_reg in
-    (win_reg, strat)
+    (win_reg, strat) *)
     
 
 let _ = Solvers.register_solver

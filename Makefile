@@ -192,7 +192,7 @@ $(SRCDIR)/pgsolver/whoiswho.ml: $(SRCDIR)/pgsolver/encipher.ml
 
 generators: $(GENERATORS:$(OBJDIR)/%.$(COMPILEEXT)=%) stratimprgen
 
-tools: obfuscator transformer compressor combine benchmark infotool winningstrats
+tools: obfuscator transformer compressor combine benchmark infotool winningstrats normalform
 
 %: $(SRCDIR)/generators/%.ml $(OBJDIR)/%.$(COMPILEEXT) $(OBJDIR)/rungenerator.$(COMPILEEXT)
 	$(OCAMLCOMP) $(CPPCOMPILER) -o $(BINDIR)/$@ nums.$(COMPILELIBEXT) $(OBJDIR)/info.$(COMPILEEXT) $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) $(OBJDIR)/paritygame.$(COMPILEEXT) $(OBJDIR)/generators.$(COMPILEEXT) $(OBJDIR)/$@.$(COMPILEEXT) $(OBJDIR)/rungenerator.$(COMPILEEXT)
@@ -338,6 +338,15 @@ TRANSFORMER_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
 transformer: $(INTERFACES) $(TRANSFORMER_MODULES)
 	$(OCAMLCOMP) $(CPPCOMPILER) -o $(BINDIR)/transformer $(TRANSFORMER_MODULES)
 
+NORMALFORM_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
+                   $(OBJDIR)/basics.$(COMPILEEXT) \
+                   $(OBJDIR)/info.$(COMPILEEXT) \
+                   $(OBJDIR)/paritygame.$(COMPILEEXT) \
+                   $(OBJDIR)/normalform.$(COMPILEEXT)
+
+normalform: $(INTERFACES) $(NORMALFORM_MODULES)
+	$(OCAMLCOMP) $(CPPCOMPILER) -o $(BINDIR)/normalform $(NORMALFORM_MODULES)
+
 ITERSAT_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
         $(OBJDIR)/basics.$(COMPILEEXT) \
 		$(OBJDIR)/info.$(COMPILEEXT) \
@@ -384,7 +393,7 @@ cleansat:
 	make -C $(SATSOLVERSROOT) clean
 
 veryclean: clean
-	rm -f $(BINDIR)/randomgame $(BINDIR)/clusteredrandomgame $(BINDIR)/steadygame $(BINDIR)/recursiveladder $(BINDIR)/jurdzinskigame $(BINDIR)/laddergame $(BINDIR)/obfuscator $(BINDIR)/transformer $(BINDIR)/compressor $(BINDIR)/benchmark $(BINDIR)/itersat
+	rm -f $(BINDIR)/randomgame $(BINDIR)/clusteredrandomgame $(BINDIR)/steadygame $(BINDIR)/recursiveladder $(BINDIR)/jurdzinskigame $(BINDIR)/laddergame $(BINDIR)/obfuscator $(BINDIR)/transformer $(BINDIR)/compressor $(BINDIR)/benchmark $(BINDIR)/itersat $(BINDIR)/normalform
 
 cleanall: cleansat veryclean
 
