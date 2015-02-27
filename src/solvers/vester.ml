@@ -41,6 +41,10 @@ let find_w succ win_reg j =
                     succ
 
 
+let recursive_calls = ref 0
+let attr_calculations = ref 0
+
+
 (* nf_solve : paritygame -> solution * strategy
  * Solve normal form parity game. *)
 let rec nf_solve game =
@@ -48,6 +52,8 @@ let rec nf_solve game =
     let n = pg_max_prio_node game in
     let (_, pl, succ, _) = game.(n) in
     let j = 1 - pl in
+
+    recursive_calls := !recursive_calls + 1;
 
     (* message 3 (fun () -> game_to_string game); *)
     (* message 3 (fun () -> string_of_int (pg_node_count game)); *)
@@ -70,6 +76,7 @@ let rec nf_solve game =
             (win_reg, strat)
         ) else (
             let attrA = attr_closure_inplace game strat j (n::(win_nodes j win_reg)) in
+            attr_calculations := !attr_calculations + 1;
 
             (* Solve recursively without nodes that player j wins from *)
             let game' = pg_copy game in
@@ -149,6 +156,7 @@ let to_normal_form game =
  * Solve parity game. *)
 let solve game = 
     let (win_reg, strat) = nf_solve game in
+    message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
     (win_reg, sanify_strat game strat win_reg)
     (* let l = pg_size game in
     let nf_game = to_normal_form game in

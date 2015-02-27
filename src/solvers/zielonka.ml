@@ -41,10 +41,16 @@ let arbitrary_strat game j nodes =
     strat
 
 
+let recursive_calls = ref 0
+let attr_calculations = ref 0
+
+
 (* solve : paritygame -> solution * strategy
  * Solve parity game. *)
 let rec solve game = 
     let l = pg_size game in
+
+    recursive_calls := !recursive_calls + 1;
 
     if pg_node_count game = 0 then (
         (Array.make l (-1), Array.make l (-1))
@@ -53,6 +59,7 @@ let rec solve game =
         let nodes_with_max_prio = collect_max_prio_nodes game in
         let stratA = arbitrary_strat game j nodes_with_max_prio in
         let attrA = attr_closure_inplace game stratA j nodes_with_max_prio in
+        attr_calculations := !attr_calculations + 1;
 
         (* Solve recursively without nodes that player wins from *)
         let game' = pg_copy game in
@@ -70,6 +77,7 @@ let rec solve game =
         ) else (
             let stratB = Array.make l (-1) in
             let attrB = attr_closure_inplace game stratB (1 - j) opp_win_nodes in
+            attr_calculations := !attr_calculations + 1;
 
             (* Solve recursively without nodes that opponent wins from *)
             let game' = pg_copy game in
@@ -87,10 +95,12 @@ let rec solve game =
     )
 
 
-let univ_solve = Univsolve.universal_solve
+let univ_solve game = (* Univsolve.universal_solve
                      (Univsolve.universal_solve_init_options_verbose
-                      !Univsolve.universal_solve_global_options)
-                     solve
+                      !Univsolve.universal_solve_global_options) *)
+                     let (win_reg, strat) = solve game in
+                     message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
+                     (win_reg, strat)
 
 
 let _ = Solvers.register_solver
