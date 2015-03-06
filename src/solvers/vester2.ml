@@ -40,6 +40,20 @@ let find_w succ win_reg j =
                     (-1)
                     succ
 
+(* find_ws : paritygame -> int array -> int array -> int -> int array * bool
+ * Find a node w for all nodes (full indicates whether there is a w for all
+ * nodes or not). *)
+let find_ws game nodes win_reg j =
+    let ws = Array.map (fun v -> let (_, _, succ, _) = game.(v) in
+                                 find_w succ win_reg j)
+                       nodes in
+    let full = List.fold_left (fun acc w -> if w = -1
+                                            then false
+                                            else acc)
+                              true
+                              ws
+    (ws, full)
+
 
 let recursive_calls = ref 0
 let attr_calculations = ref 0
@@ -48,34 +62,38 @@ let attr_calculations = ref 0
 (* nf_solve : paritygame -> solution * strategy
  * Solve normal form parity game. *)
 let rec nf_solve game =
-    let l = pg_size game in
-    let n = pg_max_prio_node game in
-    let (_, pl, succ, _) = game.(n) in
-    let j = 1 - pl in
-
     recursive_calls := !recursive_calls + 1;
-
-    (* message 3 (fun () -> game_to_string game); *)
-    (* message 3 (fun () -> string_of_int (pg_node_count game)); *)
-    (* message 3 (fun () -> "l="^(string_of_int l)^"   n="^(string_of_int n)^"   j="^(string_of_int j)^"\n"); *)
-    (* Scanf.bscanf Scanf.Scanning.stdin " %d" (fun x -> x); *)
+    let l = pg_size game in 
 
     if pg_node_count game = 0 then (
         (Array.make l (-1), Array.make l (-1))
     ) else (
-        (* Solve recursively without node n *)
+        let nodes_with_max_prio_l = collect_max_prio_nodes game in
+        let nodes_with_max_prio = Array.of_list nodes_with_max_prio_l in
+        let (_, pl, _, _) = game.(nodes_with_max_prio.(0)) in
+        let j = 1 - pl in
+
+        (* Solve recursively without node nodes with max priority *)
         let game' = pg_copy game in
-        pg_remove_nodes game' [n];
+        pg_remove_nodes game' nodes_with_max_prio_l;
         let (win_reg, strat) = nf_solve game' in
 
-        let w = find_w succ win_reg j in
+        let (ws, full) = find_ws game nodes_with_max_prio win_reg j in
+        Array.iteri (fun i w -> if w <> -1 then (
+                                    win_reg.(nodes_with_max_prio.(i)) <- 1 - j;
+                                    strat.(nodes_with_max_prio.(i)) <- w
+                                ))
+                    ws;
 
-        if w <> -1 then (
-            win_reg.(n) <- 1 - j;
-            strat.(n) <- w;
+        if full then (
             (win_reg, strat)
         ) else (
-            let attrA = attr_closure_inplace game strat j (n::(win_nodes j win_reg)) in
+            let attrA_nodes = snd (Array.fold_left (fun (i, acc) w -> if w = -1
+                                                                      then (i + 1, (nodes_with_max_prio.(i))::acc)
+                                                                      else (i + 1, acc))
+                                                   (0, [])
+                                                   ws) in
+            let attrA = attr_closure_inplace game strat j (attrA_nodes @ (win_nodes j win_reg)) in
             attr_calculations := !attr_calculations + 1;
 
             (* Solve recursively without nodes that player j wins from *)
@@ -168,6 +186,6 @@ let solve game =
 
 let _ = Solvers.register_solver
             solve
-            "vester"
-            "ve"
-            "algorithm for normal form parity games"
+            "vester2"
+            "ve2"
+            "improved algorithm for normal form parity games"
