@@ -19,4 +19,5 @@ GENERATORS=$(GENERATORSOBJ)/randomgame.$(COMPILEEXT) \
            $(GENERATORSOBJ)/jurdzinskigame.$(COMPILEEXT) \
            $(GENERATORSOBJ)/elevatorverification.$(COMPILEEXT) \
            $(GENERATORSOBJ)/towersofhanoi.$(COMPILEEXT) \
-           $(GENERATORSOBJ)/langincl.$(COMPILEEXT)
+           $(GENERATORSOBJ)/langincl.$(COMPILEEXT) \
+           $(GENERATORSOBJ)/randomnfgame.$(COMPILEEXT)

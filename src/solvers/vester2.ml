@@ -47,11 +47,11 @@ let find_ws game nodes win_reg j =
     let ws = Array.map (fun v -> let (_, _, succ, _) = game.(v) in
                                  find_w succ win_reg j)
                        nodes in
-    let full = List.fold_left (fun acc w -> if w = -1
-                                            then false
-                                            else acc)
-                              true
-                              ws
+    let full = Array.fold_left (fun acc w -> if w = -1
+                                             then false
+                                             else acc)
+                               true
+                               ws in
     (ws, full)
 
 
@@ -174,14 +174,14 @@ let to_normal_form game =
  * Solve parity game. *)
 let solve game = 
     message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
-    (* let (win_reg, strat) = nf_solve game in
-    (win_reg, sanify_strat game strat win_reg) *)
-    let l = pg_size game in
+    let (win_reg, strat) = nf_solve game in
+    (win_reg, sanify_strat game strat win_reg)
+    (* let l = pg_size game in
     let nf_game = to_normal_form game in
     let (nf_win_reg, nf_strat) = nf_solve nf_game in
     let win_reg = win_reg_from_nf nf_win_reg l in
     let strat = sanify_strat game (strat_from_nf nf_strat l nf_game) win_reg in
-    (win_reg, strat)
+    (win_reg, strat) *)
     
 
 let _ = Solvers.register_solver
