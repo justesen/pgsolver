@@ -12,7 +12,7 @@ let random_nf_game_func arguments =
     if (Array.length arguments <> 4) then (show_help (); exit 1);
 
     let size = int_of_string arguments.(0) in
-    let max_prio = 1+(int_of_string arguments.(1)) in
+    let max_prio = (int_of_string arguments.(1)) in
     let outdegmin = int_of_string arguments.(2) in
     let outdegmax = int_of_string arguments.(3) in
 
