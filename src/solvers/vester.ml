@@ -155,8 +155,8 @@ let to_normal_form game =
 (* solve : paritygame -> solution * strategy
  * Solve parity game. *)
 let solve game = 
-    message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
-    (* let (win_reg, strat) = nf_solve game in
+    (* message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
+    let (win_reg, strat) = nf_solve game in
     (win_reg, sanify_strat game strat win_reg) *)
     let l = pg_size game in
     let nf_game = to_normal_form game in

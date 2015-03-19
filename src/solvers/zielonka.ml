@@ -95,16 +95,8 @@ let rec solve game =
     )
 
 
-let univ_solve game = (* Univsolve.universal_solve
-                     (Univsolve.universal_solve_init_options_verbose
-                      !Univsolve.universal_solve_global_options) *)
-                     let (win_reg, strat) = solve game in
-                     message 2 (fun () -> "\n\nRecursive calls: "^(string_of_int !recursive_calls)^"\nAttr calculations: "^(string_of_int !attr_calculations)^"\n\n");
-                     (win_reg, strat)
-
-
 let _ = Solvers.register_solver
-            univ_solve
+            solve
             "zielonka"
             "zi"
             "my implementation of the recursive algorithm due to Zielonka"
