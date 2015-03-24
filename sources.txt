@@ -1,0 +1,11 @@
+Venema, Y. (2008): "Lecture on the modal \mu-calculus"
+
+Somla, R. (2012): "Logics and Algorithms for Verification of Concurrent Systems", Digital Comprehensive Summaries of Uoosala Dissertations from the Faculty of Science and Technology 964, 48 pp.
+
+Vester, S. (2015): "A new algorithm for solving Parity Games"
+
+Friedmann, 0.: "Recursive Algorithm for Parity Games requires Exponential Time"
+
+Friedmann, 0.; Lange, M. (2014): "The PGSolver Collection of Parity Game Solvers", Version 3
+
+

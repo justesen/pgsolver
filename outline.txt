@@ -1,0 +1,49 @@
+1. INTRODUKTION
+ - Hvorfor er model checking interessant
+ - Værtktøjer: parity games og mu kalkule
+
+2. PARITY GAMES
+ - Definitioner
+ - Algoritmer
+    - Zielonka
+    - Steen #1
+    - Steen #2 (inkl. bevis for korrekthed)
+
+3. MU CALCULUS
+ - Labelled transition systems
+ - Polymodal Logic
+ - Fixpoint operators
+ - Evaluation games
+
+4. DESIGN
+ - To komponenter:
+    - Løsning af parity games
+    - Oversættelse af LTS og formel til parity game
+ - Funktionsprogrammering pga. ADT, rekursion, højt abstraktionsniveau
+
+5. IMPLEMENTATION
+ - PGSolver framework
+ - Parity games:
+   - Data strukturer (game, vindende regioner og strategi)
+   - Rekursion
+ - Mu calculus
+   - Abstrakt syntaks
+   - Data strukturer (LTS, evaluation game)
+   - Generering af evaluation game
+   - Oversættelse til parity game
+   - Scanning og parsing
+
+6. TEST
+  - Verifikation vha. PGSolver
+  - Sammenligning/benchmarks af parity game algoritmer
+  - Eksempler på formel og LTS til parity game
+
+7. DISKUSSION
+ - Udfordringer
+ - Forbedringer
+ - Andre interessante aspekter
+
+8. KONKLUSION
+
+
+Skabelon: http://www.portalen.dtu.dk/institutter/dtu_compute/studerende.aspx
