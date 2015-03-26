@@ -176,8 +176,8 @@ let rec bound_vars bv = function
     | Dis (e1, e2)   -> bound_vars (bound_vars bv e1) e2
     | ForAll (l, e)  -> bound_vars bv e
     | Exists (l, e)  -> bound_vars bv e
-    | LFP (x, e)     -> x::(bound_vars bv e)
-    | GFP (x, e)     -> x::(bound_vars bv e)
+    | LFP (x, e)     -> x :: bound_vars bv e
+    | GFP (x, e)     -> x :: bound_vars bv e
     | _              -> bv
 
 
