@@ -47,13 +47,13 @@ let rec string_of_muexpr = function
                          else (string_of_muexpr e1)^" and ")^
                         (if composite e2
                          then "("^(string_of_muexpr e2)^")"
-                         else (string_of_muexpr e1))
+                         else (string_of_muexpr e2))
     | Dis (e1, e2)   -> (if composite e1
                          then "("^(string_of_muexpr e1)^") or "
                          else (string_of_muexpr e1)^" or ")^
                         (if composite e2
                          then "("^(string_of_muexpr e2)^")"
-                         else (string_of_muexpr e1))
+                         else (string_of_muexpr e2))
     | ForAll (l, e)  -> if composite e
                         then "["^l^"] ("^(string_of_muexpr e)^")"
                         else "["^l^"] "^(string_of_muexpr e)
@@ -231,7 +231,7 @@ let rec clean bv = function
     | e              -> e
 
 
-
+(* print_game : paritygame -> unit *)
 let print_game game =
     let n = Array.length game in
     print_string ("parity " ^ string_of_int (n-1) ^ ";\n");
@@ -283,4 +283,4 @@ let v2 = [|[]; []; ["p"]|]
 (* test/mucalc3.gm *)
 let expr3 = LFP ("x", Con (ForAll ("c", Var "x"), GFP ("y", Dis (Exists ("a", Var "y"), Exists ("b", Var "x")))))
 let lts3 = [|[(1, "b"); (1, "c")]; [(1, "a"); (1, "b")]|]
-let v3 = [|[]; []|]
+let v3 = [||]

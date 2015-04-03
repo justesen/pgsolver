@@ -116,7 +116,7 @@ pgsolver: satsolvers $(INTERFACES) $(MODULES) $(GENERATOR_MODULES) main exec
 
 library: satsolvers $(INTERFACES) $(OBJDIR)/libpgsolver.cmi $(MODULES) $(OBJDIR)/libpgsolver.$(COMPILEEXT) libexec
 
-all: pgsolver library generators tools
+all: pgsolver library generators tools mutopgaux
 
 satsolvers: $(SATSOLVERSOBJ)/satsolvers.$(COMPILEEXT)
 
@@ -227,6 +227,23 @@ STRATIMPRGEN_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
 
 stratimprgen: $(INTERFACES) $(OBJDIR)/stratimprgenerators.cmi $(STRATIMPRGEN_MODULES)
 	$(OCAMLCOMP) $(CPPCOMPILER) nums.$(COMPILELIBEXT) -o $(BINDIR)/stratimprgen $(STRATIMPRGEN_MODULES)
+
+MUTOPG_MODULES=$(OBJDIR)/ltsparse.$(COMPILEEXT) \
+			   $(OBJDIR)/mucalc.$(COMPILEEXT) \
+			   $(OBJDIR)/mucalclexer.$(COMPILEEXT) \
+			   $(OBJDIR)/mucalcparser.$(COMPILEEXT) \
+			   $(OBJDIR)/mutopg.$(COMPILEEXT)
+
+mutopgaux:
+	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalc.ml
+	ocamllex -o $(SRCDIR)/mucalc/mucalclexer.ml $(SRCDIR)/mucalc/mucalclexer.mll
+	ocamlyacc -b $(SRCDIR)/mucalc/mucalcparser $(SRCDIR)/mucalc/mucalcparser.mly
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.cmi -c $(SRCDIR)/mucalc/mucalcparser.mli
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalclexer.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalclexer.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalcparser.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparse.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltsparse.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mutopg.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mutopg.ml
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mutopg $(MUTOPG_MODULES)
 
 
 OBFUSCATOR_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
