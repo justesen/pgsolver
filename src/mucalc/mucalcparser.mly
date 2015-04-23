@@ -5,6 +5,7 @@ open Mucalc
 %token MU NU DOT
 %token <string> EX
 %token <string> FA
+%token AEX AFA
 %token AND OR NEG
 %token <string> VAR 
 %token TRUE FALSE
@@ -14,7 +15,7 @@ open Mucalc
 /* Precedence */
 %nonassoc DOT       /* lowest precedence */
 %left AND OR
-%nonassoc EX FA
+%nonassoc EX FA AEX AFA
 %nonassoc NEG       /* highest precedence */
 
 %start main         /* the entry point */
@@ -34,6 +35,8 @@ expr:
     | NEG expr              { Neg $2 }
     | EX expr               { Exists ($1, $2) }
     | FA expr               { ForAll ($1, $2) }
+    | AEX expr              { Exists ("", $2) }
+    | AFA expr              { ForAll ("", $2) }
     | VAR                   { Var $1 }
     | TRUE                  { TT }
     | FALSE                 { FF }

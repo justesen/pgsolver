@@ -1,11 +1,7 @@
 {
-open Mucalcparser
-
-let get_label s = String.sub s 1 (String.length s - 2)
+open Ltlparser
 
 let keyword = function
-    | "mu"  -> MU
-    | "nu"  -> NU
     | "and" -> AND
     | "or"  -> OR
     | "TT"  -> TRUE
@@ -16,16 +12,14 @@ let keyword = function
 let digit    = ['0'-'9']
 let char     = ['A'-'Z' 'a'-'z']
 let ident    = char (char | digit | ['_'])*
-let diamond  = '<' ident '>'
-let box      = '[' ident ']'
 
 rule token = parse
       [' ' '\t' '\n']   { token lexbuf }     (* skip blanks *)
-    | '.'               { DOT }
-    | "<>"              { AEX }
-    | "[]"              { AFA }
-    | diamond           { EX (get_label (Lexing.lexeme lexbuf)) }
-    | box               { FA (get_label (Lexing.lexeme lexbuf)) }
+    | 'U'               { UNTIL }
+    | 'O'               { NEXT }
+    | "<>"              { EVENTUALLY }
+    | "[]"              { ALWAYS }
+    | "->"              { IMPL }
     | '~'               { NEG }
     | '('               { LPAR }
     | ')'               { RPAR }

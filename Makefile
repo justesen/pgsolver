@@ -116,7 +116,7 @@ pgsolver: satsolvers $(INTERFACES) $(MODULES) $(GENERATOR_MODULES) main exec
 
 library: satsolvers $(INTERFACES) $(OBJDIR)/libpgsolver.cmi $(MODULES) $(OBJDIR)/libpgsolver.$(COMPILEEXT) libexec
 
-all: pgsolver library generators tools mutopgaux
+all: pgsolver library generators tools mutopgaux ltltopgaux
 
 satsolvers: $(SATSOLVERSOBJ)/satsolvers.$(COMPILEEXT)
 
@@ -245,6 +245,24 @@ mutopgaux:
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mutopg.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mutopg.ml
 	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mutopg $(MUTOPG_MODULES)
 
+LTLTOPG_MODULES=$(OBJDIR)/ltsparse.$(COMPILEEXT) \
+			    $(OBJDIR)/mucalc.$(COMPILEEXT) \
+			    $(OBJDIR)/ltl.$(COMPILEEXT) \
+			    $(OBJDIR)/ltllexer.$(COMPILEEXT) \
+			    $(OBJDIR)/ltlparser.$(COMPILEEXT) \
+			    $(OBJDIR)/ltltopg.$(COMPILEEXT)
+
+ltltopgaux:
+	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalc.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltl.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltl.ml
+	ocamllex -o $(SRCDIR)/mucalc/ltllexer.ml $(SRCDIR)/mucalc/ltllexer.mll
+	ocamlyacc -b $(SRCDIR)/mucalc/ltlparser $(SRCDIR)/mucalc/ltlparser.mly
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.cmi -c $(SRCDIR)/mucalc/ltlparser.mli
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltllexer.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltllexer.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltlparser.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparse.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltsparse.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltltopg.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltltopg.ml
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/ltltopg $(LTLTOPG_MODULES)
 
 OBFUSCATOR_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
                    $(OBJDIR)/basics.$(COMPILEEXT) \

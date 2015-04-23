@@ -1,14 +1,12 @@
 type token =
-  | MU
-  | NU
-  | DOT
-  | EX of (string)
-  | FA of (string)
-  | AEX
-  | AFA
+  | UNTIL
+  | NEXT
+  | EVENTUALLY
+  | ALWAYS
   | AND
   | OR
   | NEG
+  | IMPL
   | VAR of (string)
   | TRUE
   | FALSE
@@ -19,75 +17,70 @@ type token =
 
 open Parsing;;
 let _ = parse_error;;
-# 2 "src/mucalc/mucalcparser.mly"
-open Mucalc
-# 25 "src/mucalc/mucalcparser.ml"
+# 2 "src/mucalc/ltlparser.mly"
+open Ltl
+# 23 "src/mucalc/ltlparser.ml"
 let yytransl_const = [|
-  257 (* MU *);
-  258 (* NU *);
-  259 (* DOT *);
-  262 (* AEX *);
-  263 (* AFA *);
-  264 (* AND *);
-  265 (* OR *);
-  266 (* NEG *);
-  268 (* TRUE *);
-  269 (* FALSE *);
-  270 (* LPAR *);
-  271 (* RPAR *);
-  272 (* EOL *);
+  257 (* UNTIL *);
+  258 (* NEXT *);
+  259 (* EVENTUALLY *);
+  260 (* ALWAYS *);
+  261 (* AND *);
+  262 (* OR *);
+  263 (* NEG *);
+  264 (* IMPL *);
+  266 (* TRUE *);
+  267 (* FALSE *);
+  268 (* LPAR *);
+  269 (* RPAR *);
+  270 (* EOL *);
     0 (* EOF *);
     0|]
 
 let yytransl_block = [|
-  260 (* EX *);
-  261 (* FA *);
-  267 (* VAR *);
+  265 (* VAR *);
     0|]
 
 let yylhs = "\255\255\
 \001\000\002\000\002\000\002\000\002\000\002\000\002\000\002\000\
-\002\000\002\000\002\000\002\000\002\000\002\000\000\000"
+\002\000\002\000\002\000\002\000\002\000\000\000"
 
 let yylen = "\002\000\
-\002\000\004\000\004\000\003\000\003\000\003\000\002\000\002\000\
-\002\000\002\000\002\000\001\000\001\000\001\000\002\000"
+\002\000\003\000\003\000\003\000\003\000\002\000\003\000\002\000\
+\002\000\002\000\001\000\001\000\001\000\002\000"
 
 let yydefred = "\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\012\000\013\000\014\000\000\000\015\000\000\000\000\000\
-\000\000\008\000\009\000\010\000\011\000\007\000\000\000\000\000\
-\000\000\001\000\000\000\000\000\004\000\005\000\006\000\000\000\
-\000\000"
+\000\000\000\000\000\000\000\000\000\000\000\000\011\000\012\000\
+\013\000\000\000\014\000\000\000\008\000\009\000\010\000\006\000\
+\000\000\000\000\000\000\000\000\000\000\001\000\002\000\007\000\
+\000\000\000\000\000\000"
 
 let yydgoto = "\002\000\
-\014\000\015\000"
+\011\000\012\000"
 
-let yysindex = "\010\000\
-\027\255\000\000\245\254\004\255\027\255\027\255\027\255\027\255\
-\027\255\000\000\000\000\000\000\027\255\000\000\003\000\014\255\
-\015\255\000\000\000\000\000\000\000\000\000\000\001\255\027\255\
-\027\255\000\000\027\255\027\255\000\000\000\000\000\000\005\255\
-\005\255"
+let yysindex = "\255\255\
+\031\255\000\000\031\255\031\255\031\255\031\255\000\000\000\000\
+\000\000\031\255\000\000\011\000\000\000\000\000\000\000\000\000\
+\024\255\031\255\031\255\031\255\031\255\000\000\000\000\000\000\
+\002\255\002\255\009\255"
 
 let yyrindex = "\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\000\000\001\000\
-\002\000"
+\001\000\005\000\002\000"
 
 let yygindex = "\000\000\
-\000\000\255\255"
+\000\000\003\000"
 
-let yytablesize = 273
-let yytable = "\016\000\
-\002\000\003\000\026\000\018\000\019\000\020\000\021\000\022\000\
-\024\000\025\000\001\000\023\000\024\000\025\000\017\000\029\000\
-\027\000\028\000\000\000\000\000\000\000\000\000\030\000\031\000\
-\000\000\032\000\033\000\003\000\004\000\000\000\005\000\006\000\
-\007\000\008\000\000\000\000\000\009\000\010\000\011\000\012\000\
-\013\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+let yytablesize = 275
+let yytable = "\001\000\
+\004\000\003\000\018\000\000\000\005\000\013\000\014\000\015\000\
+\016\000\018\000\022\000\000\000\017\000\019\000\020\000\000\000\
+\021\000\000\000\000\000\000\000\024\000\025\000\026\000\027\000\
+\018\000\000\000\000\000\000\000\019\000\020\000\000\000\021\000\
+\003\000\004\000\005\000\000\000\023\000\006\000\000\000\007\000\
+\008\000\009\000\010\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -114,17 +107,17 @@ let yytable = "\016\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\024\000\025\000\000\000\000\000\000\000\002\000\
-\003\000"
+\000\000\000\000\000\000\000\000\000\000\004\000\004\000\000\000\
+\004\000\005\000\005\000\018\000\005\000\004\000\003\000\019\000\
+\020\000\005\000\021\000"
 
-let yycheck = "\011\001\
-\000\000\000\000\000\000\005\000\006\000\007\000\008\000\009\000\
-\008\001\009\001\001\000\013\000\008\001\009\001\011\001\015\001\
-\003\001\003\001\255\255\255\255\255\255\255\255\024\000\025\000\
-\255\255\027\000\028\000\001\001\002\001\255\255\004\001\005\001\
-\006\001\007\001\255\255\255\255\010\001\011\001\012\001\013\001\
-\014\001\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
+let yycheck = "\001\000\
+\000\000\000\000\001\001\255\255\000\000\003\000\004\000\005\000\
+\006\000\001\001\000\000\255\255\010\000\005\001\006\001\255\255\
+\008\001\255\255\255\255\255\255\018\000\019\000\020\000\021\000\
+\001\001\255\255\255\255\255\255\005\001\006\001\255\255\008\001\
+\002\001\003\001\004\001\255\255\013\001\007\001\255\255\009\001\
+\010\001\011\001\012\001\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
@@ -151,19 +144,19 @@ let yycheck = "\011\001\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
 \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
-\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
-\255\255\255\255\008\001\009\001\255\255\255\255\255\255\015\001\
-\015\001"
+\255\255\255\255\255\255\255\255\255\255\005\001\006\001\255\255\
+\008\001\005\001\006\001\001\001\008\001\013\001\013\001\005\001\
+\006\001\013\001\008\001"
 
 let yynames_const = "\
-  MU\000\
-  NU\000\
-  DOT\000\
-  AEX\000\
-  AFA\000\
+  UNTIL\000\
+  NEXT\000\
+  EVENTUALLY\000\
+  ALWAYS\000\
   AND\000\
   OR\000\
   NEG\000\
+  IMPL\000\
   TRUE\000\
   FALSE\000\
   LPAR\000\
@@ -173,8 +166,6 @@ let yynames_const = "\
   "
 
 let yynames_block = "\
-  EX\000\
-  FA\000\
   VAR\000\
   "
 
@@ -183,104 +174,95 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : 'expr) in
     Obj.repr(
-# 27 "src/mucalc/mucalcparser.mly"
+# 26 "src/mucalc/ltlparser.mly"
                             ( _1 )
-# 189 "src/mucalc/mucalcparser.ml"
-               : Mucalc.muexpr))
-; (fun __caml_parser_env ->
-    let _2 = (Parsing.peek_val __caml_parser_env 2 : string) in
-    let _4 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
-    Obj.repr(
-# 30 "src/mucalc/mucalcparser.mly"
-                            ( LFP (_2, _4) )
-# 197 "src/mucalc/mucalcparser.ml"
-               : 'expr))
-; (fun __caml_parser_env ->
-    let _2 = (Parsing.peek_val __caml_parser_env 2 : string) in
-    let _4 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
-    Obj.repr(
-# 31 "src/mucalc/mucalcparser.mly"
-                            ( GFP (_2, _4) )
-# 205 "src/mucalc/mucalcparser.ml"
-               : 'expr))
+# 180 "src/mucalc/ltlparser.ml"
+               : Ltl.ltlexpr))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'expr) in
     Obj.repr(
-# 32 "src/mucalc/mucalcparser.mly"
+# 29 "src/mucalc/ltlparser.mly"
                             ( _2 )
-# 212 "src/mucalc/mucalcparser.ml"
+# 187 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 33 "src/mucalc/mucalcparser.mly"
+# 30 "src/mucalc/ltlparser.mly"
+                            ( Dis (Neg _1, _3) )
+# 195 "src/mucalc/ltlparser.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 31 "src/mucalc/ltlparser.mly"
                             ( Con (_1, _3) )
-# 220 "src/mucalc/mucalcparser.ml"
+# 203 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 34 "src/mucalc/mucalcparser.mly"
+# 32 "src/mucalc/ltlparser.mly"
                             ( Dis (_1, _3) )
-# 228 "src/mucalc/mucalcparser.ml"
+# 211 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 35 "src/mucalc/mucalcparser.mly"
+# 33 "src/mucalc/ltlparser.mly"
                             ( Neg _2 )
-# 235 "src/mucalc/mucalcparser.ml"
+# 218 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
-    let _1 = (Parsing.peek_val __caml_parser_env 1 : string) in
-    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 36 "src/mucalc/mucalcparser.mly"
-                            ( Exists (_1, _2) )
-# 243 "src/mucalc/mucalcparser.ml"
-               : 'expr))
-; (fun __caml_parser_env ->
-    let _1 = (Parsing.peek_val __caml_parser_env 1 : string) in
-    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
-    Obj.repr(
-# 37 "src/mucalc/mucalcparser.mly"
-                            ( ForAll (_1, _2) )
-# 251 "src/mucalc/mucalcparser.ml"
+# 34 "src/mucalc/ltlparser.mly"
+                            ( Until (_1, _3) )
+# 226 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 38 "src/mucalc/mucalcparser.mly"
-                            ( Exists ("", _2) )
-# 258 "src/mucalc/mucalcparser.ml"
+# 35 "src/mucalc/ltlparser.mly"
+                            ( Next _2 )
+# 233 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 39 "src/mucalc/mucalcparser.mly"
-                            ( ForAll ("", _2) )
-# 265 "src/mucalc/mucalcparser.ml"
+# 36 "src/mucalc/ltlparser.mly"
+                            ( Eventually _2 )
+# 240 "src/mucalc/ltlparser.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
+    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 37 "src/mucalc/ltlparser.mly"
+                            ( Always _2 )
+# 247 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 40 "src/mucalc/mucalcparser.mly"
+# 38 "src/mucalc/ltlparser.mly"
                             ( Var _1 )
-# 272 "src/mucalc/mucalcparser.ml"
+# 254 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 41 "src/mucalc/mucalcparser.mly"
+# 39 "src/mucalc/ltlparser.mly"
                             ( TT )
-# 278 "src/mucalc/mucalcparser.ml"
+# 260 "src/mucalc/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 42 "src/mucalc/mucalcparser.mly"
+# 40 "src/mucalc/ltlparser.mly"
                             ( FF )
-# 284 "src/mucalc/mucalcparser.ml"
+# 266 "src/mucalc/ltlparser.ml"
                : 'expr))
 (* Entry main *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))
@@ -303,4 +285,4 @@ let yytables =
     Parsing.names_const=yynames_const;
     Parsing.names_block=yynames_block }
 let main (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
-   (Parsing.yyparse yytables 1 lexfun lexbuf : Mucalc.muexpr)
+   (Parsing.yyparse yytables 1 lexfun lexbuf : Ltl.ltlexpr)

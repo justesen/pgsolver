@@ -4,6 +4,8 @@ type token =
   | DOT
   | EX of (string)
   | FA of (string)
+  | AEX
+  | AFA
   | AND
   | OR
   | NEG

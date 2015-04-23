@@ -110,7 +110,7 @@ let rec replace x y = function
 
 (* relations : label -> muexpr -> (int * label) list -> (muexpr * int) list *)
 let relations l e adj =
-    List.fold_left (fun acc (s, l') -> if l = l'
+    List.fold_left (fun acc (s, l') -> if l = l' || l = ""
                                        then (e, s)::acc
                                        else acc)
                    []
@@ -159,7 +159,6 @@ let rec make_eg ts var_map g bv i = function
 
 (* var_prio : int PrioMap.t -> int -> muexpr -> int PrioMap.t *)
 let rec var_prio prio_map p = function
-    | Neg _         -> raise NegationFailure
     | Con (e1, e2)  -> var_prio (var_prio prio_map p e1) p e2
     | Dis (e1, e2)  -> var_prio (var_prio prio_map p e1) p e2
     | ForAll (_, e) -> var_prio prio_map p e
@@ -174,8 +173,8 @@ let rec bound_vars bv = function
     | Neg e          -> bound_vars bv e
     | Con (e1, e2)   -> bound_vars (bound_vars bv e1) e2
     | Dis (e1, e2)   -> bound_vars (bound_vars bv e1) e2
-    | ForAll (l, e)  -> bound_vars bv e
-    | Exists (l, e)  -> bound_vars bv e
+    | ForAll (_, e)  -> bound_vars bv e
+    | Exists (_, e)  -> bound_vars bv e
     | LFP (x, e)     -> x :: bound_vars bv e
     | GFP (x, e)     -> x :: bound_vars bv e
     | _              -> bv
@@ -193,14 +192,14 @@ let rec nnf bv = function
     | Neg (Dis (e1, e2))  -> Con (nnf bv (Neg e1), nnf bv (Neg e2))
     | Neg (ForAll (l, e)) -> Exists (l, nnf bv (Neg e))
     | Neg (Exists (l, e)) -> ForAll (l, nnf bv (Neg e))
-    | Neg (LFP (x, e))    -> GFP (x, nnf (x::bv) e)
-    | Neg (GFP (x, e))    -> LFP (x, nnf (x::bv) e)
+    | Neg (LFP (x, e))    -> GFP (x, nnf (x::bv) (Neg e))
+    | Neg (GFP (x, e))    -> LFP (x, nnf (x::bv) (Neg e))
     | Con (e1, e2)        -> Con (nnf bv e1, nnf bv e2)
     | Dis (e1, e2)        -> Dis (nnf bv e1, nnf bv e2)
     | ForAll (l, e)       -> ForAll (l, nnf bv e)
     | Exists (l, e)       -> Exists (l, nnf bv e)
-    | LFP (x, e)          -> LFP (x, nnf bv e)
-    | GFP (x, e)          -> GFP (x, nnf bv e)
+    | LFP (x, e)          -> LFP (x, nnf (x::bv) e)
+    | GFP (x, e)          -> GFP (x, nnf (x::bv) e)
     | e                   -> e
 
 
