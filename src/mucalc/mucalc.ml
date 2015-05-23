@@ -69,33 +69,31 @@ let string_of_state e s =
     "("^(string_of_muexpr e)^", "^(string_of_int s)^")"
 
 
-(* eg_to_pg : ((muexpr * int) * int list) array -> string list array -> paritygame *)
-let eg_to_pg eg bv v prio =
-    let p_max = 10002 in
+let eg_to_pg eg bv v prio p_max =
     Array.mapi
         (fun i ((e, s), succ) ->
             match e with
-            | TT           -> (p_max, 0, Array.of_list (i::succ), Some (string_of_state e s))
-            | FF           -> (p_max + 1, 1, Array.of_list (i::succ), Some (string_of_state e s))
+            | TT           -> (p_max, 1, Array.of_list (i::succ), Some (string_of_state e s))
+            | FF           -> (p_max + 1, 0, Array.of_list (i::succ), Some (string_of_state e s))
             | Var x        -> if List.mem x bv
                               then (PrioMap.find x prio, 0, Array.of_list succ, Some (string_of_state e s))
                               else (if List.mem x v.(s)
-                                    then (p_max, 0, Array.of_list (i::succ), Some (string_of_state e s))
-                                    else (p_max + 1, 1, Array.of_list (i::succ), Some (string_of_state e s)))
+                                    then (p_max,     1, Array.of_list (i::succ), Some (string_of_state e s))
+                                    else (p_max + 1, 0, Array.of_list (i::succ), Some (string_of_state e s)))
             | Neg (Var x)  -> if List.mem x bv
                               then raise NegationFailure
                               else (if List.mem x v.(s)
-                                    then (p_max + 1, 1, Array.of_list (i::succ), Some (string_of_state e s))
-                                    else (p_max, 0, Array.of_list (i::succ), Some (string_of_state e s)))
+                                    then (p_max + 1, 0, Array.of_list (i::succ), Some (string_of_state e s))
+                                    else (p_max,     1, Array.of_list (i::succ), Some (string_of_state e s)))
             | Neg _        -> raise NegationFailure
             | Con _        -> (0, 1, Array.of_list succ, Some (string_of_state e s))
             | Dis _        -> (0, 0, Array.of_list succ, Some (string_of_state e s))
             | ForAll _     -> if succ = []
                               then (p_max, 1, [|i|], Some (string_of_state e s))
-                              else (0, 1, Array.of_list succ, Some (string_of_state e s))
+                              else (0,     1, Array.of_list succ, Some (string_of_state e s))
             | Exists _     -> if succ = []
                               then (p_max + 1, 0, [|i|], Some (string_of_state e s))
-                              else (0, 0, Array.of_list succ, Some (string_of_state e s))
+                              else (0,         0, Array.of_list succ, Some (string_of_state e s))
             | LFP _        -> (0, 0, Array.of_list succ, Some (string_of_state e s))
             | GFP _        -> (0, 0, Array.of_list succ, Some (string_of_state e s)))
         eg
@@ -125,30 +123,28 @@ let relations l e adj =
              ((muexpr * int) * int list) list * int list VarMap.t * int *)
 let rec make_eg ts var_map g bv i = function
     | (Var x, s) as node when List.mem x bv
-                                 -> let js = VarMap.find x var_map in
-                                    let ((e, s'), _) = List.nth g (List.hd js) in
-                                    let js' = List.filter (fun i -> let ((_, s'), _) = List.nth g i in
-                                                                    s = s')
-                                                          js in
-                                    if js' = []
-                                    then make_eg ts (VarMap.add x ((i + 1)::js) var_map) (g @ [(node, [i + 1])]) bv (i + 1) (e, s)
-                                    else let j = List.hd js' in
-                                         (g @ [(node, [j])], var_map, i + 1)
+                                 -> let is = VarMap.find x var_map in
+                                    (try
+                                        let i' = List.find (fun i -> let ((_, s'), _) = List.nth g i in s = s') is in
+                                        (g @ [(node, [i'])], var_map, i + 1)
+                                     with
+                                        Not_found -> let ((e, _), _) = List.nth g (List.hd is) in
+                                                     make_eg ts (VarMap.add x ((i + 1)::is) var_map) (g @ [(node, [i + 1])]) bv (i + 1) (e, s))
     | (Con (e1, e2), s) as node  -> let (g', var_map', i') = make_eg ts var_map (g @ [(node, [i + 1])]) bv (i + 1) (e1, s) in
                                     make_eg ts var_map' (replace (node, [i + 1]) (node, [i + 1; i']) g') bv i' (e2, s)
     | (Dis (e1, e2), s) as node  -> let (g', var_map', i') = make_eg ts var_map (g @ [(node, [i + 1])]) bv (i + 1) (e1, s) in
                                     make_eg ts var_map' (replace (node, [i + 1]) (node, [i + 1; i']) g') bv i' (e2, s)
-    | (ForAll (l, e), s) as node -> let (g', var_map', i', succ) = List.fold_left
-                                                             (fun (g, vm, i, is) node -> let (g', vm', i') = make_eg ts vm g bv i node in
-                                                                                         (g', vm', i', i::is))
-                                                             (g @ [(node, [])], var_map, i + 1, [])
-                                                             (relations l e ts.(s)) in
+    | (ForAll (l, e), s) as node -> let (g', var_map', i', succ) =
+                                        List.fold_left (fun (g, vm, i, is) node -> let (g', vm', i') = make_eg ts vm g bv i node in
+                                                                                   (g', vm', i', i::is))
+                                                       (g @ [(node, [])], var_map, i + 1, [])
+                                                       (relations l e ts.(s)) in
                                     (replace (node, []) (node, succ) g', var_map', i')
-    | (Exists (l, e), s) as node -> let (g', var_map', i', succ) = List.fold_left
-                                                             (fun (g, vm, i, is) node -> let (g', vm', i') = make_eg ts vm g bv i node in
-                                                                                         (g', vm', i', i::is))
-                                                             (g @ [(node, [])], var_map, i + 1, [])
-                                                             (relations l e ts.(s)) in
+    | (Exists (l, e), s) as node -> let (g', var_map', i', succ) =
+                                        List.fold_left (fun (g, vm, i, is) node -> let (g', vm', i') = make_eg ts vm g bv i node in
+                                                                                   (g', vm', i', i::is))
+                                                       (g @ [(node, [])], var_map, i + 1, [])
+                                                       (relations l e ts.(s)) in
                                     (replace (node, []) (node, succ) g', var_map', i')
     | (LFP (x, e), s) as node    -> let var_map' = VarMap.add x [i + 1] var_map in
                                     make_eg ts var_map' (g @ [(node, [i + 1])]) bv (i + 1) (e, s)
@@ -157,14 +153,25 @@ let rec make_eg ts var_map g bv i = function
     | node                       -> (g @ [(node, [])], var_map, i + 1)
 
 
+(* max_prio : muexpr -> int -> int *)
+let rec max_prio p = function
+    | Con (e1, e2)  -> max_prio (max_prio p e1) e2
+    | Dis (e1, e2)  -> max_prio (max_prio p e1) e2
+    | ForAll (_, e) -> max_prio p e
+    | Exists (_, e) -> max_prio p e
+    | LFP (x, e)    -> max_prio (p + 2) e
+    | GFP (x, e)    -> max_prio (p + 2) e
+    | _             -> p
+
+
 (* var_prio : int PrioMap.t -> int -> muexpr -> int PrioMap.t *)
 let rec var_prio prio_map p = function
     | Con (e1, e2)  -> var_prio (var_prio prio_map p e1) p e2
     | Dis (e1, e2)  -> var_prio (var_prio prio_map p e1) p e2
     | ForAll (_, e) -> var_prio prio_map p e
     | Exists (_, e) -> var_prio prio_map p e
-    | LFP (x, e)    -> var_prio (PrioMap.add x (p + 1) prio_map) (p - 10) e
-    | GFP (x, e)    -> var_prio (PrioMap.add x p       prio_map) (p - 10) e
+    | LFP (x, e)    -> var_prio (PrioMap.add x (p + 1) prio_map) (p - 2) e
+    | GFP (x, e)    -> var_prio (PrioMap.add x p       prio_map) (p - 2) e
     | _             -> prio_map
 
 
@@ -206,6 +213,7 @@ let rec nnf bv = function
 (* int ref *)
 let var_no = ref 0
 
+
 (* fresh : string -> string *)
 let fresh var = var_no := !var_no + 1;
                 var^(string_of_int !var_no)
@@ -213,21 +221,21 @@ let fresh var = var_no := !var_no + 1;
 
 (* clean : string VarMap.t -> muexpr -> muexpr *)
 let rec clean bv = function
-    | Var x          -> if VarMap.mem x bv
-                        then Var (VarMap.find x bv)
-                        else Var x
-    | Neg e          -> Neg (clean bv e)
-    | Con (e1, e2)   -> Con (clean bv e1, clean bv e2)
-    | Dis (e1, e2)   -> Dis (clean bv e1, clean bv e2)
-    | ForAll (l, e)  -> ForAll (l, clean bv e)
-    | Exists (l, e)  -> Exists (l, clean bv e)
-    | LFP (x, e)     -> let x' = fresh x in
-                        let bv' = VarMap.add x x' bv in
-                        LFP (x', clean bv' e)
-    | GFP (x, e)     -> let x' = fresh x in
-                        let bv' = VarMap.add x x' bv in
-                        GFP (x', clean bv' e)
-    | e              -> e
+    | Var x         -> if VarMap.mem x bv
+                       then Var (VarMap.find x bv)
+                       else Var x
+    | Neg e         -> Neg (clean bv e)
+    | Con (e1, e2)  -> Con (clean bv e1, clean bv e2)
+    | Dis (e1, e2)  -> Dis (clean bv e1, clean bv e2)
+    | ForAll (l, e) -> ForAll (l, clean bv e)
+    | Exists (l, e) -> Exists (l, clean bv e)
+    | LFP (x, e)    -> let x' = fresh x in
+                       let bv' = VarMap.add x x' bv in
+                       LFP (x', clean bv' e)
+    | GFP (x, e)    -> let x' = fresh x in
+                       let bv' = VarMap.add x x' bv in
+                       GFP (x', clean bv' e)
+    | e             -> e
 
 
 (* print_game : paritygame -> unit *)
@@ -235,8 +243,8 @@ let print_game game =
     let n = Array.length game in
     print_string ("parity " ^ string_of_int (n-1) ^ ";\n");
     for i = 0 to n - 1 do
-      let (pr, pl, delta, desc) = game.(i) in
-      if pr >= 0 && pl >= 0 && pl <= 1 then (
+        let (pr, pl, delta, desc) = game.(i) in
+        if pr >= 0 && pl >= 0 && pl <= 1 then (
             print_int i;
             print_char ' ';
             print_int pr;
@@ -244,18 +252,16 @@ let print_game game =
             print_int pl;
             print_char ' ';
             for j = 0 to (Array.length delta) - 2 do
-              print_string ((string_of_int delta.(j)) ^ ",")
+                print_string ((string_of_int delta.(j)) ^ ",")
             done;
             if (Array.length delta) > 0 then print_int delta.((Array.length delta) - 1) else ();
-            (
-             match desc with
-               None -> () (* print_string (" \"" ^ string_of_int i ^ "\"") *)
-             |   Some s -> if s <> "" then print_string (" \"" ^ s ^ "\"")
-            );
+            (match desc with
+             | None   -> ()
+             | Some s -> if s <> "" then print_string (" \"" ^ s ^ "\""));
             print_char ';';
             print_newline ()
-           )
-        done
+        )
+    done
 
 
 (* make_eg : (lts, int) -> muexpr -> (string list) array -> paritygame *)
@@ -264,22 +270,7 @@ let make_pg (ts, s) e v =
     let bv = bound_vars [] formula in
     let (eg, _, _) = make_eg ts VarMap.empty [] bv 0 (formula, s) in
     let eval_game = Array.of_list eg in
-    let prio = var_prio PrioMap.empty 10000 formula in
-    let parity_game = eg_to_pg eval_game bv v prio in 
+    let p_max = max_prio 2 formula in
+    let prio = var_prio PrioMap.empty p_max formula in
+    let parity_game = eg_to_pg eval_game bv v prio p_max in 
     print_game parity_game
-
-
-(* test/mucalc1.gm *)
-let expr1 = LFP ("x", Dis (Var "p", ForAll ("a", Var "x")))
-let lts1 = [|[(1, "a")]; [(1, "a"); (2, "a")]; [(2, "a")]|]
-let v1 = [|[]; []; ["p"]|]
-
-(* test/mucalc2.gm *)
-let expr2 = GFP ("x", Dis (Var "p", ForAll ("a", Var "x")))
-let lts2 = [|[(1, "a")]; [(1, "a"); (2, "a")]; [(2, "a")]|]
-let v2 = [|[]; []; ["p"]|]
-
-(* test/mucalc3.gm *)
-let expr3 = LFP ("x", Con (ForAll ("c", Var "x"), GFP ("y", Dis (Exists ("a", Var "y"), Exists ("b", Var "x")))))
-let lts3 = [|[(1, "b"); (1, "c")]; [(1, "a"); (1, "b")]|]
-let v3 = [||]
