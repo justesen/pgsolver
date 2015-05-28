@@ -116,7 +116,7 @@ pgsolver: satsolvers $(INTERFACES) $(MODULES) $(GENERATOR_MODULES) main exec
 
 library: satsolvers $(INTERFACES) $(OBJDIR)/libpgsolver.cmi $(MODULES) $(OBJDIR)/libpgsolver.$(COMPILEEXT) libexec
 
-all: pgsolver library generators tools mutopgaux ltltopgaux
+all: pgsolver library generators tools mucalcmcaux ltlmcaux
 
 satsolvers: $(SATSOLVERSOBJ)/satsolvers.$(COMPILEEXT)
 
@@ -228,41 +228,55 @@ STRATIMPRGEN_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
 stratimprgen: $(INTERFACES) $(OBJDIR)/stratimprgenerators.cmi $(STRATIMPRGEN_MODULES)
 	$(OCAMLCOMP) $(CPPCOMPILER) nums.$(COMPILELIBEXT) -o $(BINDIR)/stratimprgen $(STRATIMPRGEN_MODULES)
 
-MUTOPG_MODULES=$(OBJDIR)/ltsparse.$(COMPILEEXT) \
+MUTOPG_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
 			   $(OBJDIR)/mucalc.$(COMPILEEXT) \
 			   $(OBJDIR)/mucalclexer.$(COMPILEEXT) \
 			   $(OBJDIR)/mucalcparser.$(COMPILEEXT) \
-			   $(OBJDIR)/mutopg.$(COMPILEEXT)
+			   $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
+               $(OBJDIR)/paritygame.$(COMPILEEXT) \
+               $(OBJDIR)/solvers.$(COMPILEEXT) \
+               $(OBJDIR)/basics.$(COMPILEEXT) \
+               $(OBJDIR)/specialsolve.$(COMPILEEXT) \
+               $(OBJDIR)/transformations.$(COMPILEEXT) \
+               $(OBJDIR)/univsolve.$(COMPILEEXT) \
+			   $(OBJDIR)/recursive.$(COMPILEEXT) \
+			   $(OBJDIR)/mucalcmc.$(COMPILEEXT)
 
-mutopgaux:
-	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalc.ml
-	ocamllex -o $(SRCDIR)/mucalc/mucalclexer.ml $(SRCDIR)/mucalc/mucalclexer.mll
-	ocamlyacc -b $(SRCDIR)/mucalc/mucalcparser $(SRCDIR)/mucalc/mucalcparser.mly
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.cmi -c $(SRCDIR)/mucalc/mucalcparser.mli
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalclexer.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalclexer.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalcparser.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparse.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltsparse.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mutopg.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mutopg.ml
-	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mutopg $(MUTOPG_MODULES)
+mucalcmcaux:
+	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalc.ml
+	ocamllex -o $(SRCDIR)/modelchecker/mucalclexer.ml $(SRCDIR)/modelchecker/mucalclexer.mll
+	ocamlyacc -b $(SRCDIR)/modelchecker/mucalcparser $(SRCDIR)/modelchecker/mucalcparser.mly
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.cmi -c $(SRCDIR)/modelchecker/mucalcparser.mli
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalclexer.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalclexer.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalcparser.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltsparser.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcmc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalcmc.ml
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mucalcmc $(MUTOPG_MODULES)
 
-LTLTOPG_MODULES=$(OBJDIR)/ltsparse.$(COMPILEEXT) \
+LTLTOPG_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
 			    $(OBJDIR)/mucalc.$(COMPILEEXT) \
 			    $(OBJDIR)/ltl.$(COMPILEEXT) \
 			    $(OBJDIR)/ltllexer.$(COMPILEEXT) \
 			    $(OBJDIR)/ltlparser.$(COMPILEEXT) \
-			    $(OBJDIR)/ltltopg.$(COMPILEEXT)
+			    $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
+                $(OBJDIR)/paritygame.$(COMPILEEXT) \
+                $(OBJDIR)/solvers.$(COMPILEEXT) \
+                $(OBJDIR)/basics.$(COMPILEEXT) \
+                $(OBJDIR)/specialsolve.$(COMPILEEXT) \
+                $(OBJDIR)/transformations.$(COMPILEEXT) \
+                $(OBJDIR)/univsolve.$(COMPILEEXT) \
+			    $(OBJDIR)/recursive.$(COMPILEEXT) \
+			    $(OBJDIR)/ltlmc.$(COMPILEEXT)
 
-ltltopgaux:
-	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/mucalc/mucalc.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltl.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltl.ml
-	ocamllex -o $(SRCDIR)/mucalc/ltllexer.ml $(SRCDIR)/mucalc/ltllexer.mll
-	ocamlyacc -b $(SRCDIR)/mucalc/ltlparser $(SRCDIR)/mucalc/ltlparser.mly
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.cmi -c $(SRCDIR)/mucalc/ltlparser.mli
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltllexer.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltllexer.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltlparser.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparse.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltsparse.ml
-	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltltopg.$(COMPILEEXT) -c $(SRCDIR)/mucalc/ltltopg.ml
-	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/ltltopg $(LTLTOPG_MODULES)
+ltlmcaux:
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltl.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltl.ml
+	ocamllex -o $(SRCDIR)/modelchecker/ltllexer.ml $(SRCDIR)/modelchecker/ltllexer.mll
+	ocamlyacc -b $(SRCDIR)/modelchecker/ltlparser $(SRCDIR)/modelchecker/ltlparser.mly
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.cmi -c $(SRCDIR)/modelchecker/ltlparser.mli
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltllexer.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltllexer.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltlparser.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlmc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltlmc.ml
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/ltlmc $(LTLTOPG_MODULES)
 
 OBFUSCATOR_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
                    $(OBJDIR)/basics.$(COMPILEEXT) \

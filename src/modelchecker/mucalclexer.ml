@@ -1,4 +1,4 @@
-# 1 "src/mucalc/mucalclexer.mll"
+# 1 "src/modelchecker/mucalclexer.mll"
  
 open Mucalcparser
 
@@ -13,7 +13,7 @@ let keyword = function
     | "FF"  -> FALSE
     | s     -> VAR s
 
-# 17 "src/mucalc/mucalclexer.ml"
+# 17 "src/modelchecker/mucalclexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base = 
    "\000\000\245\255\079\000\247\255\248\255\249\255\160\000\221\000\
@@ -206,59 +206,59 @@ let rec token lexbuf =
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 23 "src/mucalc/mucalclexer.mll"
+# 23 "src/modelchecker/mucalclexer.mll"
                         ( token lexbuf )
-# 212 "src/mucalc/mucalclexer.ml"
+# 212 "src/modelchecker/mucalclexer.ml"
 
   | 1 ->
-# 24 "src/mucalc/mucalclexer.mll"
+# 24 "src/modelchecker/mucalclexer.mll"
                         ( DOT )
-# 217 "src/mucalc/mucalclexer.ml"
+# 217 "src/modelchecker/mucalclexer.ml"
 
   | 2 ->
-# 25 "src/mucalc/mucalclexer.mll"
+# 25 "src/modelchecker/mucalclexer.mll"
                         ( AEX )
-# 222 "src/mucalc/mucalclexer.ml"
+# 222 "src/modelchecker/mucalclexer.ml"
 
   | 3 ->
-# 26 "src/mucalc/mucalclexer.mll"
+# 26 "src/modelchecker/mucalclexer.mll"
                         ( AFA )
-# 227 "src/mucalc/mucalclexer.ml"
+# 227 "src/modelchecker/mucalclexer.ml"
 
   | 4 ->
-# 27 "src/mucalc/mucalclexer.mll"
+# 27 "src/modelchecker/mucalclexer.mll"
                         ( EX (get_label (Lexing.lexeme lexbuf)) )
-# 232 "src/mucalc/mucalclexer.ml"
+# 232 "src/modelchecker/mucalclexer.ml"
 
   | 5 ->
-# 28 "src/mucalc/mucalclexer.mll"
+# 28 "src/modelchecker/mucalclexer.mll"
                         ( FA (get_label (Lexing.lexeme lexbuf)) )
-# 237 "src/mucalc/mucalclexer.ml"
+# 237 "src/modelchecker/mucalclexer.ml"
 
   | 6 ->
-# 29 "src/mucalc/mucalclexer.mll"
+# 29 "src/modelchecker/mucalclexer.mll"
                         ( NEG )
-# 242 "src/mucalc/mucalclexer.ml"
+# 242 "src/modelchecker/mucalclexer.ml"
 
   | 7 ->
-# 30 "src/mucalc/mucalclexer.mll"
+# 30 "src/modelchecker/mucalclexer.mll"
                         ( LPAR )
-# 247 "src/mucalc/mucalclexer.ml"
+# 247 "src/modelchecker/mucalclexer.ml"
 
   | 8 ->
-# 31 "src/mucalc/mucalclexer.mll"
+# 31 "src/modelchecker/mucalclexer.mll"
                         ( RPAR )
-# 252 "src/mucalc/mucalclexer.ml"
+# 252 "src/modelchecker/mucalclexer.ml"
 
   | 9 ->
-# 32 "src/mucalc/mucalclexer.mll"
+# 32 "src/modelchecker/mucalclexer.mll"
                         ( keyword (Lexing.lexeme lexbuf) )
-# 257 "src/mucalc/mucalclexer.ml"
+# 257 "src/modelchecker/mucalclexer.ml"
 
   | 10 ->
-# 33 "src/mucalc/mucalclexer.mll"
+# 33 "src/modelchecker/mucalclexer.mll"
                         ( EOF )
-# 262 "src/mucalc/mucalclexer.ml"
+# 262 "src/modelchecker/mucalclexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
