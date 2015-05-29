@@ -12,8 +12,9 @@ let print_trace pg strat =
                                              then indent
                                              else indent^"    "))
                               (Paritygame.pg_get_tr pg i)
-              else print_trace' (i::visited) indent strat.(i))
-    in print_trace' [] "    " 0
+              else print_trace' (i::visited) indent strat.(i)) in
+    
+    print_trace' [] "    " 0
 
 
 let ltl_modelchecker_func lts_file expr_file =
@@ -43,7 +44,7 @@ let ltl_modelchecker_func lts_file expr_file =
     if win_reg.(0) = 0
     then print_string "Yes\n"
     else (print_string "No\n\n";
-          print_trace pg strat);;
+          print_trace pg strat)
 
 
 let () =

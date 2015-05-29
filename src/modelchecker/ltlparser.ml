@@ -46,13 +46,13 @@ let yylhs = "\255\255\
 \002\000\002\000\002\000\002\000\002\000\000\000"
 
 let yylen = "\002\000\
-\002\000\003\000\003\000\003\000\003\000\002\000\003\000\002\000\
+\002\000\003\000\003\000\003\000\003\000\002\000\002\000\003\000\
 \002\000\002\000\001\000\001\000\001\000\002\000"
 
 let yydefred = "\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\011\000\012\000\
-\013\000\000\000\014\000\000\000\008\000\009\000\010\000\006\000\
-\000\000\000\000\000\000\000\000\000\000\001\000\002\000\007\000\
+\013\000\000\000\014\000\000\000\007\000\009\000\010\000\006\000\
+\000\000\000\000\000\000\000\000\000\000\001\000\002\000\008\000\
 \000\000\000\000\000\000"
 
 let yydgoto = "\002\000\
@@ -217,18 +217,18 @@ let yyact = [|
 # 218 "src/modelchecker/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
+    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 34 "src/modelchecker/ltlparser.mly"
+                            ( Next _2 )
+# 225 "src/modelchecker/ltlparser.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 34 "src/modelchecker/ltlparser.mly"
-                            ( Until (_1, _3) )
-# 226 "src/modelchecker/ltlparser.ml"
-               : 'expr))
-; (fun __caml_parser_env ->
-    let _2 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
-    Obj.repr(
 # 35 "src/modelchecker/ltlparser.mly"
-                            ( Next _2 )
+                            ( Until (_1, _3) )
 # 233 "src/modelchecker/ltlparser.ml"
                : 'expr))
 ; (fun __caml_parser_env ->

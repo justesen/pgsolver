@@ -13,12 +13,12 @@ open Mucalc
 %token EOL EOF
 
 /* Precedence */
-%nonassoc DOT       /* lowest precedence */
+%nonassoc DOT        /* lowest precedence */
 %left AND OR
-%nonassoc EX FA AEX AFA
-%nonassoc NEG       /* highest precedence */
+%right EX FA AEX AFA
+%right NEG           /* highest precedence */
 
-%start main         /* the entry point */
+%start main          /* the entry point */
 %type <Mucalc.muexpr> main
 
 %%
