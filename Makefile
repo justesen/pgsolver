@@ -192,7 +192,7 @@ $(SRCDIR)/pgsolver/whoiswho.ml: $(SRCDIR)/pgsolver/encipher.ml
 
 generators: $(GENERATORS:$(OBJDIR)/%.$(COMPILEEXT)=%) stratimprgen
 
-tools: obfuscator transformer compressor combine benchmark infotool winningstrats normalform
+tools: obfuscator transformer compressor combine benchmark infotool winningstrats normalform exhaust
 
 %: $(SRCDIR)/generators/%.ml $(OBJDIR)/%.$(COMPILEEXT) $(OBJDIR)/rungenerator.$(COMPILEEXT)
 	$(OCAMLCOMP) $(CPPCOMPILER) -o $(BINDIR)/$@ nums.$(COMPILELIBEXT) $(OBJDIR)/info.$(COMPILEEXT) $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) $(OBJDIR)/paritygame.$(COMPILEEXT) $(OBJDIR)/generators.$(COMPILEEXT) $(OBJDIR)/$@.$(COMPILEEXT) $(OBJDIR)/rungenerator.$(COMPILEEXT)
@@ -228,22 +228,24 @@ STRATIMPRGEN_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
 stratimprgen: $(INTERFACES) $(OBJDIR)/stratimprgenerators.cmi $(STRATIMPRGEN_MODULES)
 	$(OCAMLCOMP) $(CPPCOMPILER) nums.$(COMPILELIBEXT) -o $(BINDIR)/stratimprgen $(STRATIMPRGEN_MODULES)
 
-MUTOPG_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
-			   $(OBJDIR)/mucalc.$(COMPILEEXT) \
-			   $(OBJDIR)/mucalclexer.$(COMPILEEXT) \
-			   $(OBJDIR)/mucalcparser.$(COMPILEEXT) \
-			   $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
-               $(OBJDIR)/paritygame.$(COMPILEEXT) \
-               $(OBJDIR)/solvers.$(COMPILEEXT) \
-               $(OBJDIR)/basics.$(COMPILEEXT) \
-               $(OBJDIR)/specialsolve.$(COMPILEEXT) \
-               $(OBJDIR)/transformations.$(COMPILEEXT) \
-               $(OBJDIR)/univsolve.$(COMPILEEXT) \
-			   $(OBJDIR)/recursive.$(COMPILEEXT) \
-			   $(OBJDIR)/mucalcmc.$(COMPILEEXT)
+MUCALCMC_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
+			     $(OBJDIR)/mucalc.$(COMPILEEXT) \
+			     $(OBJDIR)/egtopg.$(COMPILEEXT) \
+			     $(OBJDIR)/mucalclexer.$(COMPILEEXT) \
+			     $(OBJDIR)/mucalcparser.$(COMPILEEXT) \
+			     $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
+                 $(OBJDIR)/paritygame.$(COMPILEEXT) \
+                 $(OBJDIR)/solvers.$(COMPILEEXT) \
+                 $(OBJDIR)/basics.$(COMPILEEXT) \
+                 $(OBJDIR)/specialsolve.$(COMPILEEXT) \
+                 $(OBJDIR)/transformations.$(COMPILEEXT) \
+                 $(OBJDIR)/univsolve.$(COMPILEEXT) \
+			     $(OBJDIR)/recursive.$(COMPILEEXT) \
+			     $(OBJDIR)/mucalcmc.$(COMPILEEXT)
 
 mucalcmcaux:
 	$(OCAMLCOMP) -o $(OBJDIR)/mucalc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalc.ml
+	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/egtopg.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/egtopg.ml
 	ocamllex -o $(SRCDIR)/modelchecker/mucalclexer.ml $(SRCDIR)/modelchecker/mucalclexer.mll
 	ocamlyacc -b $(SRCDIR)/modelchecker/mucalcparser $(SRCDIR)/modelchecker/mucalcparser.mly
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.cmi -c $(SRCDIR)/modelchecker/mucalcparser.mli
@@ -251,22 +253,23 @@ mucalcmcaux:
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalcparser.ml
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltsparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltsparser.ml
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/mucalcmc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/mucalcmc.ml
-	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mucalcmc $(MUTOPG_MODULES)
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/mucalcmc $(MUCALCMC_MODULES)
 
-LTLTOPG_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
-			    $(OBJDIR)/mucalc.$(COMPILEEXT) \
-			    $(OBJDIR)/ltl.$(COMPILEEXT) \
-			    $(OBJDIR)/ltllexer.$(COMPILEEXT) \
-			    $(OBJDIR)/ltlparser.$(COMPILEEXT) \
-			    $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
-                $(OBJDIR)/paritygame.$(COMPILEEXT) \
-                $(OBJDIR)/solvers.$(COMPILEEXT) \
-                $(OBJDIR)/basics.$(COMPILEEXT) \
-                $(OBJDIR)/specialsolve.$(COMPILEEXT) \
-                $(OBJDIR)/transformations.$(COMPILEEXT) \
-                $(OBJDIR)/univsolve.$(COMPILEEXT) \
-			    $(OBJDIR)/recursive.$(COMPILEEXT) \
-			    $(OBJDIR)/ltlmc.$(COMPILEEXT)
+LTLMC_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
+			  $(OBJDIR)/mucalc.$(COMPILEEXT) \
+			  $(OBJDIR)/egtopg.$(COMPILEEXT) \
+			  $(OBJDIR)/ltl.$(COMPILEEXT) \
+			  $(OBJDIR)/ltllexer.$(COMPILEEXT) \
+			  $(OBJDIR)/ltlparser.$(COMPILEEXT) \
+			  $(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
+              $(OBJDIR)/paritygame.$(COMPILEEXT) \
+              $(OBJDIR)/solvers.$(COMPILEEXT) \
+              $(OBJDIR)/basics.$(COMPILEEXT) \
+              $(OBJDIR)/specialsolve.$(COMPILEEXT) \
+              $(OBJDIR)/transformations.$(COMPILEEXT) \
+              $(OBJDIR)/univsolve.$(COMPILEEXT) \
+			  $(OBJDIR)/recursive.$(COMPILEEXT) \
+			  $(OBJDIR)/ltlmc.$(COMPILEEXT)
 
 ltlmcaux:
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltl.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltl.ml
@@ -276,7 +279,7 @@ ltlmcaux:
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltllexer.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltllexer.ml
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlparser.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltlparser.ml
 	$(OCAMLCOMP) -I $(OBJDIR) -o $(OBJDIR)/ltlmc.$(COMPILEEXT) -c $(SRCDIR)/modelchecker/ltlmc.ml
-	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/ltlmc $(LTLTOPG_MODULES)
+	$(OCAMLCOMP) str.$(COMPILELIBEXT) -o $(BINDIR)/ltlmc $(LTLMC_MODULES)
 
 OBFUSCATOR_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
                    $(OBJDIR)/basics.$(COMPILEEXT) \
@@ -395,6 +398,10 @@ NORMALFORM_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
 
 normalform: $(INTERFACES) $(NORMALFORM_MODULES)
 	$(OCAMLCOMP) $(CPPCOMPILER) -o $(BINDIR)/normalform $(NORMALFORM_MODULES)
+
+exhaust:
+	$(OCAMLCOMP) -o $(OBJDIR)/exhaust.$(COMPILEEXT) -c $(SRCDIR)/tools/exhaust.ml
+	$(OCAMLCOMP) -o $(BINDIR)/exhaust $(OBJDIR)/exhaust.$(COMPILEEXT)
 
 ITERSAT_MODULES=$(TCSLIBOBJ)/tcslib.$(COMPILELIBEXT) \
         $(OBJDIR)/basics.$(COMPILEEXT) \

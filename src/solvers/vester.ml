@@ -49,20 +49,15 @@ let attr_calculations = ref 0
  * Solve normal form parity game. *)
 let rec nf_solve game =
     let l = pg_size game in
-    let n = pg_max_prio_node game in
-    let (_, pl, succ, _) = game.(n) in
-    let j = 1 - pl in
-
     recursive_calls := !recursive_calls + 1;
-
-    (* message 3 (fun () -> game_to_string game); *)
-    (* message 3 (fun () -> string_of_int (pg_node_count game)); *)
-    (* message 3 (fun () -> "l="^(string_of_int l)^"   n="^(string_of_int n)^"   j="^(string_of_int j)^"\n"); *)
-    (* Scanf.bscanf Scanf.Scanning.stdin " %d" (fun x -> x); *)
 
     if pg_node_count game = 0 then (
         (Array.make l (-1), Array.make l (-1))
     ) else (
+        let n = pg_max_prio_node game in
+        let (_, pl, succ, _) = game.(n) in
+        let j = 1 - pl in
+
         (* Solve recursively without node n *)
         let game' = pg_copy game in
         pg_remove_nodes game' [n];

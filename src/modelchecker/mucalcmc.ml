@@ -1,4 +1,5 @@
-let print_trace pg strat =
+(* print_tree : paritygame -> strategy -> unit *)
+let print_tree pg strat =
     print_string "Trace:";
 
     let rec print_trace' visited indent i =
@@ -16,8 +17,8 @@ let print_trace pg strat =
 
     print_trace' [] "    " 0
 
-
-let mucalc_modelchecker_func lts_file expr_file =
+(* model_checker : string -> string -> unit *)
+let model_checker lts_file expr_file =
     (* Read LTS file *)
     let lts = ref "" in
     let lts_chan = open_in lts_file in
@@ -37,14 +38,15 @@ let mucalc_modelchecker_func lts_file expr_file =
     close_in expr_chan;
 
     (* Solve parity game *)
-    let pg = Mucalc.make_pg (lts, 0) expr v in
+    let pg = Egtopg.make_pg (lts, 0) expr v in
+    print_string (string_of_int (Array.length pg));
     let (win_reg, strat) = Recursive.solve pg in
 
     (* Output *)
     if win_reg.(0) = 0
     then print_string "Yes\n\n"
-    else print_string "No\n\n";
-    print_trace pg strat
+    else print_string "No\n\n"(* ;
+    print_tree pg strat *)
 
 
 let () =
@@ -54,4 +56,4 @@ let () =
                         "       where <lts> is a Labelled Transition System\n" ^
                         "             <expr> is an expression in modal mu calculus\n");
           exit 1)
-    else (mucalc_modelchecker_func Sys.argv.(1) Sys.argv.(2))
+    else (model_checker Sys.argv.(1) Sys.argv.(2))

@@ -13,6 +13,7 @@ type ltlexpr =
     | Always of ltlexpr
 
 
+(* to_mucalc : ltlexpr -> muexpr *)
 let rec to_mucalc = function
     | TT             -> Mucalc.TT
     | FF             -> Mucalc.FF
