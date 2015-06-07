@@ -91,6 +91,8 @@ MODULES_WITHOUT_SOLVERS_AND_LIB=$(OBJDIR)/basics.$(COMPILEEXT) \
         $(OBJDIR)/info.$(COMPILEEXT) \
 	$(OBJDIR)/whoiswho.$(COMPILEEXT) \
 	$(OBJDIR)/paritygame.$(COMPILEEXT) \
+	$(OBJDIR)/auxiliary.$(COMPILEEXT) \
+	$(OBJDIR)/auxiliarynf.$(COMPILEEXT) \
 	$(OBJDIR)/mdp.$(COMPILEEXT) \
 	$(OBJDIR)/transformations.$(COMPILEEXT) \
 	$(OBJDIR)/specialsolve.$(COMPILEEXT) \
