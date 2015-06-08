@@ -1,7 +1,5 @@
 type label = string
-
 type lts = (int * label) list array
-
 type valuation = string list array
 
 exception SyntaxErrorTransitionSystem

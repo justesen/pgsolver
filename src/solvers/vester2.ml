@@ -5,8 +5,8 @@ open Auxiliarynf
 
 
 (* find_T : paritygame -> int list -> int array -> int -> int list * strategy
- * Find the set T of set nodes that have a successor v in win_reg, and find
-   this strategy from nodes u in T to v. *)
+ * Find the set T of nodes that have a successor v in win_reg, and find this
+ * strategy from nodes u in T to v. *)
 let find_T game setU win_reg j =
     let setT = ref [] in
     let stratT = Array.make (pg_size game) (-1) in
@@ -52,7 +52,8 @@ let rec nf_solve game =
             let (win_reg'', strat'') = nf_solve game' in
 
             let win_reg = add_to_win_reg l j attrA win_reg'' in
-            (win_reg, merge_strategies l [strat''; stratA; strat'])
+            let strat = merge_strategies l [strat''; stratA; strat'] in
+            (win_reg, strat)
         )
     )
 
@@ -60,7 +61,7 @@ let rec nf_solve game =
 (* solve : paritygame -> solution * strategy
  * Solve parity game. *)
 let solve game =
-(*     let (win_reg, strat) = nf_solve game in
+    (* let (win_reg, strat) = nf_solve game in
     (win_reg, sanify_strat game strat win_reg) *)
     let l = pg_size game in
     let nf_game = to_normal_form game in

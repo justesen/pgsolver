@@ -14,7 +14,7 @@ let arbitrary_strat game j nodes =
     strat
 
 
-(* solve : paritygame -> solution * strategy
+(* zsolve : paritygame -> solution * strategy
  * Solve parity game. *)
 let rec zsolve game = 
     let l = pg_size game in

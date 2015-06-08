@@ -39,14 +39,13 @@ let model_checker lts_file expr_file =
 
     (* Solve parity game *)
     let pg = Egtopg.make_pg (lts, 0) expr v in
-    print_string (string_of_int (Array.length pg));
-    let (win_reg, strat) = Recursive.solve pg in
+    let (win_reg, strat) = Zielonka.solve pg in
 
     (* Output *)
     if win_reg.(0) = 0
     then print_string "Yes\n\n"
-    else print_string "No\n\n"(* ;
-    print_tree pg strat *)
+    else print_string "No\n\n";
+    print_tree pg strat
 
 
 let () =

@@ -1,9 +1,6 @@
 type label = string
-
 type variable = string
-
 type lts = (int * label) list array
-
 type valuation = string list array
 
 type muexpr =
