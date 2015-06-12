@@ -3,6 +3,8 @@ open Mucalc
 
 type evalgame = ((muexpr * int) * int list) array
 
+exception PositiveNormalFormFailure
+
 
 (* eg_to_pg : evalgame -> variable list -> valuation -> int StringMap.t -> paritygame *)
 let eg_to_pg eg bv v omega p =
@@ -57,11 +59,11 @@ let eg_to_pg eg bv v omega p =
                                    then (p,     1, [|i|], Some (string_of_state e s))
                                    else (p + 1, 0, [|i|], Some (string_of_state e s)))
             | Neg (Var x) -> if List.mem x bv
-                             then raise NegationFailure
+                             then raise PositiveNormalFormFailure
                              else (if List.mem x v.(s)
                                    then (p + 1, 0, [|i|], Some (string_of_state e s))
                                    else (p,     1, [|i|], Some (string_of_state e s)))
-            | Neg _       -> raise NegationFailure
+            | Neg _       -> raise PositiveNormalFormFailure
             | Con _       -> (0, 1, Array.of_list succ, Some (string_of_state e s))
             | Dis _       -> (0, 0, Array.of_list succ, Some (string_of_state e s))
             | Exists _    -> if succ = []

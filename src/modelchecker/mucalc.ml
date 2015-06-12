@@ -17,7 +17,26 @@ type muexpr =
 
 module StringMap = Map.Make(String)
 
-exception NegationFailure
+
+(* is_pnf : variable list -> muexpr -> bool *)
+let rec is_pnf bv = function
+    | Neg (Var x)         -> if List.mem x bv
+                             then false
+                             else true
+    | Neg (Neg e)         -> is_pnf bv e
+    | Neg (Con (e1, e2))
+    | Neg (Dis (e1, e2))  -> is_pnf bv (Neg e1) && is_pnf bv (Neg e2)
+    | Neg (Exists (l, e))
+    | Neg (ForAll (l, e)) -> is_pnf bv (Neg e)
+    | Neg (LFP (x, e))
+    | Neg (GFP (x, e))    -> is_pnf bv e
+    | Con (e1, e2)
+    | Dis (e1, e2)        -> is_pnf bv e1 &&  is_pnf bv e2
+    | Exists (l, e)
+    | ForAll (l, e)       -> is_pnf bv e
+    | LFP (x, e)
+    | GFP (x, e)          -> is_pnf bv e
+    | e                   -> true
 
 
 (* pnf : variable list -> muexpr -> muexpr *)
