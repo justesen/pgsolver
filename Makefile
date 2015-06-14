@@ -242,8 +242,7 @@ MUCALCMC_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
                  $(OBJDIR)/specialsolve.$(COMPILEEXT) \
                  $(OBJDIR)/transformations.$(COMPILEEXT) \
                  $(OBJDIR)/univsolve.$(COMPILEEXT) \
-			     $(OBJDIR)/auxiliary.$(COMPILEEXT) \
-			     $(OBJDIR)/zielonka.$(COMPILEEXT) \
+			     $(OBJDIR)/recursive.$(COMPILEEXT) \
 			     $(OBJDIR)/mucalcmc.$(COMPILEEXT)
 
 mucalcmcaux:
@@ -271,8 +270,7 @@ LTLMC_MODULES=$(OBJDIR)/ltsparser.$(COMPILEEXT) \
               $(OBJDIR)/specialsolve.$(COMPILEEXT) \
               $(OBJDIR)/transformations.$(COMPILEEXT) \
               $(OBJDIR)/univsolve.$(COMPILEEXT) \
-			  $(OBJDIR)/auxiliary.$(COMPILEEXT) \
-			  $(OBJDIR)/zielonka.$(COMPILEEXT) \
+			  $(OBJDIR)/recursive.$(COMPILEEXT) \
 			  $(OBJDIR)/ltlmc.$(COMPILEEXT)
 
 ltlmcaux:

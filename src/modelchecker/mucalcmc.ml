@@ -1,21 +1,22 @@
 (* print_tree : paritygame -> strategy -> unit *)
 let print_tree pg strat =
-    print_string "Trace:";
+    print_string "Tree:";
 
-    let rec print_trace' visited indent i =
+    let rec print_tree' visited indent i =
         if List.mem i visited
         then (print_string "\n")
         else (print_string ("\n"^indent^(Paritygame.pg_get_desc' pg i));
               if strat.(i) = -1
               then let succ = Paritygame.pg_get_tr pg i in
-                   Array.iter (print_trace' (i::visited)
+                   Array.iter (print_tree' (i::visited)
                                             (if Array.length succ = 1
                                              then indent
                                              else indent^"    "))
                               (Paritygame.pg_get_tr pg i)
-              else print_trace' (i::visited) indent strat.(i)) in
+              else print_tree' (i::visited) indent strat.(i)) in
 
-    print_trace' [] "    " 0
+    print_tree' [] "    " 0
+
 
 (* model_checker : string -> string -> unit *)
 let model_checker lts_file expr_file =
@@ -39,7 +40,7 @@ let model_checker lts_file expr_file =
 
     (* Solve parity game *)
     let pg = Egtopg.make_pg (lts, 0) expr v in
-    let (win_reg, strat) = Zielonka.solve pg in
+    let (win_reg, strat) = Recursive.solve pg in
 
     (* Output *)
     if win_reg.(0) = 0

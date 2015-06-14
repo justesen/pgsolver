@@ -117,7 +117,7 @@ let make_eg ts bv (e, s) =
         | (Var x, s) as node when List.mem x bv
                                      -> let is = StringMap.find x var_map in
                                         (try
-                                            let (i', _, _) = List.find (fun (ii, ee, ss) -> s = ss) is in
+                                            let (i', _, _) = List.find (fun (_, _, s') -> s = s) is in
                                             ([(node, [i'])], var_map, i + 1)
                                          with
                                             Not_found -> let (_, e, _) = (List.hd is) in
@@ -145,12 +145,89 @@ let make_eg ts bv (e, s) =
     Array.of_list eg
 
 
+(* make_eg_iter : lts -> variable list -> muexpr * int -> evalgame *)
+let make_eg_iter ts bv (e, s) =
+    let relations l e adj =
+        List.fold_left (fun acc (s, l') -> if l = l' || l = ""
+                                           then (e, s)::acc
+                                           else acc)
+                       []
+                       adj in
+
+    (* Create graph of evaluation game, iteratively, by using two stacks for
+       a post-order tree traversal. *)
+    let pre_st = Stack.create () in
+    let post_st = Stack.create () in
+    let var_map = ref StringMap.empty in
+    let i = ref 0 in
+
+    Stack.push (e, s) pre_st;
+
+    while not (Stack.is_empty pre_st) do
+        let current = Stack.pop pre_st in
+
+        (match current with
+         | (Var x, s) as node when List.mem x bv
+                                      -> let is = StringMap.find x !var_map in
+                                         (try
+                                             let (i', _, _) = List.find (fun (_, _, s') -> s = s') is in
+                                             Stack.push (node, [i']) post_st
+                                          with
+                                             Not_found -> let (_, e, _) = List.hd is in
+                                                          var_map := StringMap.add x ((!i + 1, e, s)::is) !var_map;
+                                                          Stack.push (node, [!i + 1]) post_st;
+                                                          Stack.push (e, s) pre_st)
+         | (Con (e1, e2), s)
+         | (Dis (e1, e2), s) as node  -> Stack.push (node, []) post_st;
+                                         Stack.push (e2, s) pre_st;
+                                         Stack.push (e1, s) pre_st
+         | (Exists (l, e), s)
+         | (ForAll (l, e), s) as node -> Stack.push (node, []) post_st;
+                                         List.iter (fun (e', s') -> Stack.push (e', s') pre_st) (List.rev (relations l e ts.(s)))
+         | (LFP (x, e), s)
+         | (GFP (x, e), s) as node    -> var_map := StringMap.add x [(!i + 1, e, s)] !var_map;
+                                         Stack.push (node, [!i + 1]) post_st;
+                                         Stack.push (e, s) pre_st
+         | node                       -> Stack.push (node, []) post_st);
+
+        i := !i + 1
+    done;
+
+    let g = ref [] in
+    Stack.iter (fun (node, succ) -> g := (node, succ)::!g) post_st;
+    let eg = Array.of_list !g in
+
+    (* Find the indices of successors that are missing in the game graph. *)
+    Array.mapi
+        (fun i (node, succ) ->
+            match node with
+            | (Con (e1, e2), s)
+            | (Dis (e1, e2), s)  -> let rec find_succ j =
+                                        let ((e', s'), _) = eg.(j) in
+                                        if (e', s') = (e2, s)
+                                        then j
+                                        else find_succ (j + 1) in
+
+                                    (node, [i + 1; find_succ (i + 1)])
+            | (Exists (l, e), s)
+            | (ForAll (l, e), s) -> let rec find_succ j succ' = function
+                                    | []      -> succ'
+                                    | nb::nbs -> let (node', _) = eg.(j) in
+                                                 if node' = nb
+                                                 then find_succ (j + 1) (j::succ') nbs
+                                                 else find_succ (j + 1) succ' (nb::nbs) in
+
+                                    (node, List.rev (find_succ (i + 1) [] (relations l e ts.(s))))
+            | _                  -> (node, succ))
+        eg
+
+
 (* make_pg : (lts, int) -> muexpr -> valuation -> paritygame *)
 let make_pg (ts, s) e v =
     let e' = clean e in
     let bv = bound_vars e' in
     let xi = pnf bv e' in
-    let eg = make_eg ts bv (xi, s) in
+    let eg = make_eg_iter ts bv (xi, s) in
     let p = max_prio xi in
     let omega = var_prio p xi in
     eg_to_pg eg bv v omega p

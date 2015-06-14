@@ -40,7 +40,7 @@ let model_checker lts_file expr_file =
 
     (* Solve parity game *)
     let pg = Egtopg.make_pg (lts, 0) (Ltl.to_mucalc expr) v in
-    let (win_reg, strat) = Zielonka.solve pg in
+    let (win_reg, strat) = Recursive.solve pg in
 
     (* Output *)
     if win_reg.(0) = 0
