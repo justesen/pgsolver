@@ -226,6 +226,7 @@ let make_eg_iter ts bv (e, s) =
 let make_pg (ts, s) e v =
     let e' = clean e in
     let bv = bound_vars e' in
+    if not (is_pnf bv e') then raise PositiveNormalFormFailure;
     let xi = pnf bv e' in
     let eg = make_eg_iter ts bv (xi, s) in
     let p = max_prio xi in
