@@ -23,5 +23,5 @@ let rec to_mucalc = function
     | Dis (e1, e2)   -> Mucalc.Dis (to_mucalc e1, to_mucalc e2)
     | Next e         -> Mucalc.ForAll ("", to_mucalc e)
     | Until (e1, e2) -> Mucalc.LFP ("x", Mucalc.Dis (to_mucalc e2, Mucalc.Con (to_mucalc e1, Mucalc.ForAll ("", Mucalc.Var "x"))))
-    | Eventually e   -> to_mucalc (Until (TT, e))
-    | Always e       -> to_mucalc (Neg (Eventually (Neg e)))
+    | Eventually e   -> Mucalc.LFP ("x", Mucalc.Dis (to_mucalc e, Mucalc.ForAll ("", Mucalc.Var "x"))) (* to_mucalc (Until (TT, e)) *)
+    | Always e       -> Mucalc.GFP ("x", Mucalc.Con (to_mucalc e, Mucalc.ForAll ("", Mucalc.Var "x"))) (* to_mucalc (Neg (Eventually (Neg e))) *)
